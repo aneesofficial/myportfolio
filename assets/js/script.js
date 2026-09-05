@@ -53,8 +53,10 @@ function updateIndicators() {
 function updateCentering() {
   // 1. Calculate responsive scale
   let scale = 1;
-  if (window.innerWidth <= 768) {
-    scale = 1; // Rely on CSS width for mobile to keep text readable
+  if (window.innerWidth <= 500) {
+    scale = 0.42;
+  } else if (window.innerWidth <= 768) {
+    scale = 0.75;
   } else if (window.innerWidth <= 900) {
     scale = 0.9;
   }
