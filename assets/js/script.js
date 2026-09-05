@@ -53,24 +53,37 @@ function updateIndicators() {
 function updateCentering() {
   // 1. Calculate responsive scale
   let scale = 1;
-  if (window.innerWidth <= 500) {
-    scale = 0.42;
-  } else if (window.innerWidth <= 768) {
-    scale = 0.75;
+  if (window.innerWidth <= 768) {
+    scale = 1; // Rely on CSS width for mobile to keep text readable
   } else if (window.innerWidth <= 900) {
     scale = 0.9;
   }
 
   // 2. Calculate horizontal translation for exact centering
   let tx = "0%";
+  let controlsLeft = "50%"; // Default to center of book (spine)
+  let controlsWidth = "100%"; // Default width
+
   if (currentLocation === 1) {
     tx = "-25%"; // Center the right page (cover)
+    controlsLeft = "75%"; // Center controls under the right half (600px)
+    controlsWidth = "50%";
   } else if (currentLocation === maxLocation) {
     tx = "25%"; // Center the left page (back cover)
+    controlsLeft = "25%"; // Center controls under the left half (200px)
+    controlsWidth = "50%";
   }
 
   // Apply to positioner
   bookPositioner.style.transform = `scale(${scale}) translateX(${tx})`;
+
+  // Apply to controls
+  const bookControls = document.getElementById("book-controls");
+  if (bookControls) {
+    bookControls.style.left = controlsLeft;
+    bookControls.style.width = controlsWidth;
+    bookControls.style.transition = "left 0.8s cubic-bezier(0.45, 0.05, 0.25, 1), width 0.8s cubic-bezier(0.45, 0.05, 0.25, 1)";
+  }
 }
 
 window.addEventListener("resize", updateCentering);
@@ -78,23 +91,15 @@ window.addEventListener("resize", updateCentering);
 // Navigation Button Visibility
 function updateNavButtons() {
   if (currentLocation === 1) {
-    prevBtn.style.visibility = "hidden";
-    prevBtn.style.opacity = "0";
-    prevBtn.style.pointerEvents = "none";
+    prevBtn.disabled = true;
   } else {
-    prevBtn.style.visibility = "visible";
-    prevBtn.style.opacity = "1";
-    prevBtn.style.pointerEvents = "auto";
+    prevBtn.disabled = false;
   }
 
   if (currentLocation === maxLocation) {
-    nextBtn.style.visibility = "hidden";
-    nextBtn.style.opacity = "0";
-    nextBtn.style.pointerEvents = "none";
+    nextBtn.disabled = true;
   } else {
-    nextBtn.style.visibility = "visible";
-    nextBtn.style.opacity = "1";
-    nextBtn.style.pointerEvents = "auto";
+    nextBtn.disabled = false;
   }
 }
 

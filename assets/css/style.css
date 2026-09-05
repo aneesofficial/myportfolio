@@ -89,8 +89,12 @@ a:hover {
 
 /* Controls - Now in normal document flow inside flex container */
 .book-controls {
-  width: 100%;
-  max-width: 800px;
+  position: absolute;
+  top: calc(100% + 20px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  max-width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -102,6 +106,8 @@ a:hover {
   border: 1px solid var(--accent-color);
   color: var(--accent-color);
   padding: 10px 24px;
+  width: 120px;
+  justify-content: center;
   border-radius: 30px;
   cursor: pointer;
   display: flex;
@@ -123,8 +129,8 @@ a:hover {
 }
 
 .nav-btn:disabled {
-  opacity: 0;
-  visibility: hidden;
+  opacity: 0.4;
+  cursor: not-allowed;
   pointer-events: none;
 }
 
@@ -715,10 +721,10 @@ h3.cover-role {
 }
 
 /* Page Indicators */
-.page-indicators { display: flex; gap: 10px; }
+.page-indicators { display: flex; gap: 6px; flex: 1; justify-content: center; align-items: center; }
 .indicator-dot {
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: rgba(255,255,255,0.15);
   cursor: pointer;
@@ -731,7 +737,25 @@ h3.cover-role {
   box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
 }
 
-/* Responsive Scaling */
-@media (max-width: 900px) {
-  /* Let JS handle the scaling, these are just fallbacks if needed */
+/* Responsive Layout for Mobile */
+@media (max-width: 768px) {
+  .book {
+    width: 95vw;
+    height: 120vw;
+  }
+  .nav-btn {
+    padding: 8px 16px;
+    width: 100px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .book {
+    width: 95vw;
+    height: 140vw; /* Taller on very small screens to fit text */
+  }
+  .page-content {
+    padding: 20px 15px; /* Less padding on small screens to fit more content */
+  }
 }
