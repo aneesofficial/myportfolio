@@ -255,6 +255,8 @@ a:hover {
   scrollbar-width: thin;
   scrollbar-color: var(--accent-color) var(--page-bg);
   flex-grow: 1;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 20px;
 }
 .scrollable::-webkit-scrollbar { width: 4px; }
 .scrollable::-webkit-scrollbar-thumb {
