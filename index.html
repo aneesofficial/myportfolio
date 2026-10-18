@@ -28,8 +28,11 @@
           <div class="front">
             <div class="front-content cover-page" id="f1">
               <div class="cover-inner">
-                <img alt="Anees Ur Rehman" class="profile-img" src="./assets/images/Anees Khan.png"
-                  style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid var(--primary-color); margin-bottom: 20px;" />
+                <div class="profile-avatar-wrapper">
+                  <div class="profile-avatar-inner">
+                    <img alt="Anees Ur Rehman" class="profile-img" src="./assets/images/Anees Khan.png" />
+                  </div>
+                </div>
                 <h2 class="cover-name">Anees Ur Rehman</h2>
                 <h3 class="cover-role">AI Engineer</h3>
                 <p class="cover-tagline">Turning real-world data into working AI systems — from computer vision to
@@ -469,7 +472,9 @@
             <div class="back-content" id="b6">
               <div class="page-content">
                 <h2 class="page-title">Contact Me</h2>
-                <form action="#" class="contact-form" data-form="">
+                <form action="https://formsubmit.co/aneeskhann5577@gmail.com" method="POST" class="contact-form" data-form="">
+                  <input type="text" name="_honey" style="display:none">
+                  <input type="hidden" name="_captcha" value="false">
                   <div class="input-wrapper">
                     <input class="form-input" data-form-input="" name="fullname" placeholder="Full Name" required=""
                       type="text" />
@@ -484,6 +489,7 @@
                     <ion-icon name="paper-plane"></ion-icon>
                     <span>Send Message</span>
                   </button>
+                  <div class="form-status-msg" id="form-status-msg"></div>
                 </form>
               </div>
             </div>
@@ -513,7 +519,6 @@
                 <div class="divider"></div>
                 <footer class="mt-4" style="margin-top: auto !important; color: #888; font-size: 0.8rem; width: 100%;">
                   <p class="copyright">© <span id="copyright-year">2026</span> Anees Ur Rehman.</p>
-                  <p class="last-updated">Last Updated: 14/2/2026</p>
                 </footer>
               </div>
             </div>

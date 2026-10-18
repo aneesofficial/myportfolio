@@ -181,10 +181,11 @@ nextBtn.addEventListener("click", goNextPage);
 updateCentering();
 updateNavButtons();
 
-// Contact Form Logic
+// Contact Form Logic (Real Email Delivery via FormSubmit)
 const form = document.querySelector("[data-form]");
 const formInputs = document.querySelectorAll("[data-form-input]");
 const formBtn = document.querySelector("[data-form-btn]");
+const formStatusMsg = document.getElementById("form-status-msg");
 
 if (form && formInputs && formBtn) {
   for (let i = 0; i < formInputs.length; i++) {
@@ -197,12 +198,63 @@ if (form && formInputs && formBtn) {
     });
   }
 
-  form.addEventListener("submit", function(e) {
+  form.addEventListener("submit", async function (e) {
     e.preventDefault();
-    if (form.checkValidity()) {
-      alert("Message sent successfully! (Demo Mode)");
-      form.reset();
-      formBtn.setAttribute("disabled", "");
+    if (!form.checkValidity()) return;
+
+    const originalBtnContent = formBtn.innerHTML;
+    formBtn.innerHTML = '<ion-icon name="sync-outline" class="spin-icon"></ion-icon> <span>Sending...</span>';
+    formBtn.setAttribute("disabled", "");
+
+    if (formStatusMsg) {
+      formStatusMsg.className = "form-status-msg";
+      formStatusMsg.textContent = "";
+    }
+
+    const formData = new FormData(form);
+    const data = {
+      name: formData.get("fullname"),
+      email: formData.get("email"),
+      message: formData.get("message"),
+      _subject: `New Portfolio Message from ${formData.get("fullname")}`,
+      _template: "table",
+      _captcha: "false"
+    };
+
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/aneeskhann5577@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (response.ok && (result.success === "true" || result.success === true)) {
+        formBtn.innerHTML = '<ion-icon name="checkmark-circle-outline"></ion-icon> <span>Message Sent!</span>';
+        if (formStatusMsg) {
+          formStatusMsg.className = "form-status-msg success";
+          formStatusMsg.textContent = "Thank you! Your message has been sent successfully. I will get back to you soon.";
+        }
+        form.reset();
+        setTimeout(() => {
+          formBtn.innerHTML = originalBtnContent;
+          formBtn.setAttribute("disabled", "");
+        }, 4000);
+      } else {
+        throw new Error(result.message || "Failed to send message.");
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+      formBtn.innerHTML = originalBtnContent;
+      formBtn.removeAttribute("disabled");
+      if (formStatusMsg) {
+        formStatusMsg.className = "form-status-msg error";
+        formStatusMsg.textContent = "Failed to send. Please email directly at aneeskhann5577@gmail.com";
+      }
     }
   });
 }
