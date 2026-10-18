@@ -12,39 +12,13 @@ let currentLocation = 1;
 let numOfPapers = papers.length; // 8 papers
 let maxLocation = numOfPapers + 1; // 9 locations
 
-// Setup z-indexes and touch pointer events so layers look physically correct and allow smooth scrolling on mobile
+// Setup z-indexes so layers look physically correct and allow smooth scrolling on mobile
 function setZIndexes() {
   papers.forEach((paper, index) => {
-    const isFlipped = paper.classList.contains("flipped");
-    if (isFlipped) {
+    if (paper.classList.contains("flipped")) {
       paper.style.zIndex = index + 1;
     } else {
       paper.style.zIndex = 20 + (numOfPapers - index);
-    }
-
-    const front = paper.querySelector(".front");
-    const back = paper.querySelector(".back");
-
-    if (isFlipped) {
-      if (front) {
-        front.style.pointerEvents = "none";
-        front.style.visibility = "hidden";
-      }
-      const isTopFlipped = (index === currentLocation - 2);
-      if (back) {
-        back.style.pointerEvents = isTopFlipped ? "auto" : "none";
-        back.style.visibility = isTopFlipped ? "visible" : "hidden";
-      }
-    } else {
-      if (back) {
-        back.style.pointerEvents = "none";
-        back.style.visibility = "hidden";
-      }
-      const isTopUnflipped = (index === currentLocation - 1);
-      if (front) {
-        front.style.pointerEvents = isTopUnflipped ? "auto" : "none";
-        front.style.visibility = isTopUnflipped ? "visible" : "hidden";
-      }
     }
   });
 }
@@ -138,11 +112,6 @@ function openPaper(index) {
     paper.classList.add("flipping");
     paper.classList.add("flipped");
     
-    const front = paper.querySelector(".front");
-    const back = paper.querySelector(".back");
-    if (front) { front.style.visibility = "visible"; front.style.pointerEvents = "none"; }
-    if (back) { back.style.visibility = "visible"; back.style.pointerEvents = "none"; }
-
     // Remove the flipping class after transition ends (0.85s)
     setTimeout(() => {
       paper.classList.remove("flipping");
@@ -157,11 +126,6 @@ function closePaper(index) {
     paper.classList.add("flipping");
     paper.classList.remove("flipped");
     
-    const front = paper.querySelector(".front");
-    const back = paper.querySelector(".back");
-    if (front) { front.style.visibility = "visible"; front.style.pointerEvents = "none"; }
-    if (back) { back.style.visibility = "visible"; back.style.pointerEvents = "none"; }
-
     setTimeout(() => {
       paper.classList.remove("flipping");
       setZIndexes();

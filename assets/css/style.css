@@ -184,9 +184,13 @@ a:hover {
 .paper.flipping {
   z-index: 999 !important;
 }
-.paper.flipping .front,
-.paper.flipping .back {
-  visibility: visible !important;
+
+/* Ensure hidden backfaces do not intercept touch or clicks */
+.paper.flipped .front {
+  pointer-events: none;
+}
+.paper:not(.flipped) .back {
+  pointer-events: none;
 }
 
 /* Cover specific */
