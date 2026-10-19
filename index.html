@@ -60,7 +60,7 @@
                     target="_blank"><ion-icon name="logo-twitter"></ion-icon></a>
                 </div>
                 <div class="cover-buttons" style="display: flex; gap: 10px; justify-content: center;">
-                  <a class="btn btn-primary" download="" href="./assets/Anees_Ur_Rehman_CV.pdf">Download CV</a>
+                  <button class="btn btn-primary" onclick="goToSpread(5)">View Projects</button>
                   <button class="btn btn-secondary" onclick="goToSpread(7)">Contact Me</button>
                 </div>
               </div>
@@ -517,9 +517,12 @@
                 <h2 class="back-thanks mt-4">Thank you for reading.</h2>
                 <p class="back-author">Anees Ur Rehman — AI Engineer</p>
                 <div class="divider"></div>
-                <footer class="mt-4" style="margin-top: auto !important; color: #888; font-size: 0.8rem; width: 100%;">
-                  <p class="copyright">© <span id="copyright-year">2026</span> Anees Ur Rehman.</p>
-                </footer>
+                <div class="mt-4" style="margin-top: auto !important;">
+                  <a class="btn btn-primary" download="" href="./assets/Anees_Ur_Rehman_CV.pdf" style="display: inline-flex; align-items: center; gap: 8px;">
+                    <ion-icon name="download-outline"></ion-icon>
+                    <span>Download CV</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
