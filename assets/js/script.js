@@ -9,16 +9,43 @@ const indicatorsContainer = document.getElementById("page-indicators");
 
 // State
 let currentLocation = 1;
-let numOfPapers = papers.length; // 8 papers
-let maxLocation = numOfPapers + 1; // 9 locations
+const numOfPapers = papers.length;
+const maxLocation = numOfPapers + 1;
+let isAnimating = false;
+const FLIP_DURATION = 850; // ms
 
-// Setup z-indexes so layers look physically correct and allow smooth scrolling on mobile
+// Setup z-indexes and layer visibility so layers look physically correct and underlying pages never bleed through
 function setZIndexes() {
+  const isAnyFlipping = document.querySelector(".paper.flipping") !== null;
+
   papers.forEach((paper, index) => {
-    if (paper.classList.contains("flipped")) {
+    const isFlipped = paper.classList.contains("flipped");
+    const isFlipping = paper.classList.contains("flipping");
+    
+    // Z-index layering
+    if (isFlipped) {
       paper.style.zIndex = index + 1;
     } else {
       paper.style.zIndex = 20 + (numOfPapers - index);
+    }
+
+    // Top visible page on the left: top flipped paper (currentLocation - 2)
+    const isTopLeft = isFlipped && (index === currentLocation - 2);
+    // Top visible page on the right: top unflipped paper (currentLocation - 1)
+    const isTopRight = !isFlipped && (index === currentLocation - 1);
+    
+    // During an animation, keep the page underneath the flipping paper visible so there is no blank void
+    const isUnderFlipping = isAnyFlipping && (
+      (index === currentLocation - 3 && isFlipped) ||
+      (index === currentLocation && !isFlipped)
+    );
+
+    if (isTopLeft || isTopRight || isFlipping || isUnderFlipping) {
+      paper.style.visibility = "visible";
+      paper.style.pointerEvents = "auto";
+    } else {
+      paper.style.visibility = "hidden";
+      paper.style.pointerEvents = "none";
     }
   });
 }
@@ -51,13 +78,18 @@ function updateIndicators() {
 
 // Universal Centering Logic
 function updateCentering() {
+  const vw = Math.min(
+    window.innerWidth || 800,
+    document.documentElement.clientWidth || 800
+  );
+
   // 1. Calculate responsive scale
   let scale = 1;
-  if (window.innerWidth <= 500) {
-    scale = 0.42;
-  } else if (window.innerWidth <= 768) {
-    scale = 0.75;
-  } else if (window.innerWidth <= 900) {
+  if (vw <= 500) {
+    scale = Math.max(0.38, Math.min(0.46, (vw - 16) / 800));
+  } else if (vw <= 768) {
+    scale = Math.min(0.75, (vw - 30) / 800);
+  } else if (vw <= 950) {
     scale = 0.9;
   }
 
@@ -112,11 +144,12 @@ function openPaper(index) {
     paper.classList.add("flipping");
     paper.classList.add("flipped");
     
-    // Remove the flipping class after transition ends (0.85s)
+    // Remove the flipping class after transition ends
     setTimeout(() => {
       paper.classList.remove("flipping");
       setZIndexes();
-    }, 850);
+      isAnimating = false;
+    }, FLIP_DURATION);
   }
 }
 
@@ -129,12 +162,15 @@ function closePaper(index) {
     setTimeout(() => {
       paper.classList.remove("flipping");
       setZIndexes();
-    }, 850);
+      isAnimating = false;
+    }, FLIP_DURATION);
   }
 }
 
 function goNextPage() {
+  if (isAnimating) return;
   if(currentLocation < maxLocation) {
+    isAnimating = true;
     openPaper(currentLocation - 1);
     currentLocation++;
     setZIndexes();
@@ -145,7 +181,9 @@ function goNextPage() {
 }
 
 function goPrevPage() {
+  if (isAnimating) return;
   if(currentLocation > 1) {
+    isAnimating = true;
     closePaper(currentLocation - 2);
     currentLocation--;
     setZIndexes();
@@ -156,17 +194,21 @@ function goPrevPage() {
 }
 
 window.goToSpread = function(spreadNum) {
+  if (spreadNum === currentLocation || isAnimating) return;
   if (spreadNum > currentLocation) {
     while (currentLocation < spreadNum) {
-      openPaper(currentLocation - 1);
+      papers[currentLocation - 1].classList.remove("flipping");
+      papers[currentLocation - 1].classList.add("flipped");
       currentLocation++;
     }
   } else if (spreadNum < currentLocation) {
     while (currentLocation > spreadNum) {
-      closePaper(currentLocation - 2);
+      papers[currentLocation - 2].classList.remove("flipping");
+      papers[currentLocation - 2].classList.remove("flipped");
       currentLocation--;
     }
   }
+  isAnimating = false;
   setZIndexes();
   updateIndicators();
   updateCentering();

@@ -192,23 +192,27 @@ a:hover {
 }
 
 .paper.flipped {
+  -webkit-transform: rotateY(-180deg);
   transform: rotateY(-180deg);
 }
 .paper.flipping {
   z-index: 999 !important;
 }
 
-/* Ensure hidden backfaces do not intercept touch or clicks */
+/* Ensure hidden backfaces do not intercept touch or clicks and are completely invisible */
 .paper.flipped .front {
   pointer-events: none;
+  visibility: hidden;
 }
 .paper:not(.flipped) .back {
   pointer-events: none;
+  visibility: hidden;
 }
 
 /* Cover specific */
 .cover-page, .back-cover {
   background: var(--book-cover) !important;
+  background-color: var(--book-cover) !important;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -242,9 +246,11 @@ a:hover {
   border-radius: 0 10px 10px 0;
   box-shadow: inset 15px 0 25px rgba(0,0,0,0.7);
 }
-#p8 .back {
+#p7 .back {
   border-radius: 10px 0 0 10px;
   box-shadow: inset -15px 0 25px rgba(0,0,0,0.7);
+  background: var(--book-cover) !important;
+  background-color: var(--book-cover) !important;
 }
 
 /* Content Layout */
@@ -791,10 +797,11 @@ h3.cover-role {
   box-shadow: 0 0 30px rgba(212, 175, 55, 0.15), inset 0 0 15px rgba(212, 175, 55, 0.1);
 }
 .back-thanks { 
-  font-size: 2.2rem; 
+  font-size: 1.85rem; 
   color: var(--text-primary);
   font-weight: 300;
   letter-spacing: 1px;
+  line-height: 1.3;
 }
 .back-author { 
   color: var(--accent-color); 
