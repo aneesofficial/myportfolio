@@ -14,40 +14,29 @@ const maxLocation = numOfPapers + 1;
 let isAnimating = false;
 const FLIP_DURATION = 850; // ms
 
-// Setup z-indexes and layer visibility so layers look physically correct and underlying pages never bleed through
+// Setup z-indexes so layers look physically correct and allow smooth 3D transitions
 function setZIndexes() {
-  const isAnyFlipping = document.querySelector(".paper.flipping") !== null;
-
   papers.forEach((paper, index) => {
-    const isFlipped = paper.classList.contains("flipped");
-    const isFlipping = paper.classList.contains("flipping");
-    
-    // Z-index layering
-    if (isFlipped) {
+    if (paper.classList.contains("flipped")) {
       paper.style.zIndex = index + 1;
     } else {
       paper.style.zIndex = 20 + (numOfPapers - index);
     }
-
-    // Top visible page on the left: top flipped paper (currentLocation - 2)
-    const isTopLeft = isFlipped && (index === currentLocation - 2);
-    // Top visible page on the right: top unflipped paper (currentLocation - 1)
-    const isTopRight = !isFlipped && (index === currentLocation - 1);
-    
-    // During an animation, keep the page underneath the flipping paper visible so there is no blank void
-    const isUnderFlipping = isAnyFlipping && (
-      (index === currentLocation - 3 && isFlipped) ||
-      (index === currentLocation && !isFlipped)
-    );
-
-    if (isTopLeft || isTopRight || isFlipping || isUnderFlipping) {
-      paper.style.visibility = "visible";
-      paper.style.pointerEvents = "auto";
-    } else {
-      paper.style.visibility = "hidden";
-      paper.style.pointerEvents = "none";
-    }
   });
+
+  // When at the back cover (currentLocation === maxLocation), isolate underlying form in b6 so it never bleeds through in Safari/mobile
+  const b6 = document.getElementById("b6");
+  if (b6) {
+    if (currentLocation === maxLocation) {
+      setTimeout(() => {
+        if (currentLocation === maxLocation) {
+          b6.style.visibility = "hidden";
+        }
+      }, FLIP_DURATION);
+    } else {
+      b6.style.visibility = "visible";
+    }
+  }
 }
 
 setZIndexes();
@@ -148,7 +137,6 @@ function openPaper(index) {
     setTimeout(() => {
       paper.classList.remove("flipping");
       setZIndexes();
-      isAnimating = false;
     }, FLIP_DURATION);
   }
 }
@@ -162,7 +150,6 @@ function closePaper(index) {
     setTimeout(() => {
       paper.classList.remove("flipping");
       setZIndexes();
-      isAnimating = false;
     }, FLIP_DURATION);
   }
 }
@@ -171,6 +158,8 @@ function goNextPage() {
   if (isAnimating) return;
   if(currentLocation < maxLocation) {
     isAnimating = true;
+    setTimeout(() => { isAnimating = false; }, 450);
+
     openPaper(currentLocation - 1);
     currentLocation++;
     setZIndexes();
@@ -184,6 +173,12 @@ function goPrevPage() {
   if (isAnimating) return;
   if(currentLocation > 1) {
     isAnimating = true;
+    setTimeout(() => { isAnimating = false; }, 450);
+
+    // Ensure b6 is visible before opening backwards
+    const b6 = document.getElementById("b6");
+    if (b6) b6.style.visibility = "visible";
+
     closePaper(currentLocation - 2);
     currentLocation--;
     setZIndexes();
@@ -195,6 +190,10 @@ function goPrevPage() {
 
 window.goToSpread = function(spreadNum) {
   if (spreadNum === currentLocation || isAnimating) return;
+
+  const b6 = document.getElementById("b6");
+  if (b6) b6.style.visibility = "visible";
+
   if (spreadNum > currentLocation) {
     while (currentLocation < spreadNum) {
       papers[currentLocation - 1].classList.remove("flipping");
